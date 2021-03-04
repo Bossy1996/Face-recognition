@@ -1,0 +1,7 @@
+dlib
+cmake
+numpy
+Pillow
+pandas
+dlib-models-face-recognition
+Sphinx
