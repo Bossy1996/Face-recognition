@@ -94,3 +94,23 @@ def _trim_css_to_bounds(css, image_shape):
 
 def face_distance(face_encodings, face_to_compare):
     pass
+
+
+def _raw_face_locations_batched(images, number_of_times_to_upsamples=1, batch_size=128):
+    pass
+
+
+def batch_face_locations(images, number_of_tiumes_to_upsample=1, batch_size=128):
+    pass
+
+
+def _raw_face_landmarks(face_image, face_locations=None, model="large"):
+    pass
+
+
+def face_landmarks(face_image, face_loactions=None, model="large"):
+    pass
+
+
+def compare_faces(known_face_encodings, face_encoding_to_check, tolerance=0.6):
+    pass
