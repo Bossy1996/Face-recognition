@@ -3,5 +3,5 @@ cmake
 numpy
 Pillow
 pandas
-dlib-models-face-recognition
+dlib_models_face_recognition
 Sphinx
