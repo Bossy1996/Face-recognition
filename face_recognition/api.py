@@ -60,10 +60,6 @@ def face_locations(img, number_of_times_to_upsample=1, model='hog'):
                 _raw_face_locations(img, number_of_times_to_upsample, model)]
 
 
-def _raw_face_locations():
-    pass
-
-
 def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="small"):
     """
     Given an image, return the 128-dimension face encoding for each face in the image.
@@ -78,6 +74,10 @@ def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="
     raw_landmarks = _raw_face_landmarks(face_image, known_face_locations, model)
     return [np.array(face_encoder.compute_face_descriptor(face_image, raw_landmark_set, num_jitters)) for
             raw_landmark_set in raw_landmarks]
+
+
+def _raw_face_locations():
+    pass
 
 
 def _rect_to_css(rect):
