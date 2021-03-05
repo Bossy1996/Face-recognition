@@ -76,12 +76,18 @@ def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="
             raw_landmark_set in raw_landmarks]
 
 
-def _raw_face_locations():
+def _raw_face_locations(img, number_of_times_upsample=1, model="hog"):
     pass
 
 
 def _rect_to_css(rect):
-    pass
+    """
+    Convert a dlib 'rect' object to a plain tuple in (top, right, bottom, left) order
+
+    :param rect: a dlib 'rect' object.
+    :return: a plain tuple representation of the rect in (top, right , bottom, left) order
+    """
+    return rect.top(), rect.right(), rect.bottom(), rect.left()
 
 
 def _css_to_rect(css):
