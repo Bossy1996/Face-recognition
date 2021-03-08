@@ -5,7 +5,7 @@ import dlib
 
 try:
     import dlib_models_face_recognition
-except Exception:
+except ImportError:
     print("Please install `dlib-models-face-recognition` with this command before using `Face_recognition`:\n`")
     print("pip install git+https://github.com/Bossy1996/dlib-models-face-recognition")
     quit()
@@ -125,15 +125,47 @@ def _trim_css_to_bounds(css, image_shape):
 
 
 def face_distance(face_encodings, face_to_compare):
-    pass
+    """
+    Given a list of face encodings, compare them to a known face encodings and get a euclidean distance
+    for each comparison face. The distance tells you how similar the faces are.
+    :param face_encodings: List of face encodings to compare
+    :param face_to_compare: A face encoding to compare against
+    :return: A numpy ndarray with the distance for each face in the same order as the 'faces' array
+    """
+    if len(face_encodings) == 0:
+        return np.empty((0))
+
+    return np.linalg.norm(face_encodings - face_to_compare, axis=1)
 
 
-def _raw_face_locations_batched(images, number_of_times_to_upsamples=1, batch_size=128):
-    pass
+def _raw_face_locations_batched(images, number_of_times_to_upsample=1, batch_size=128):
+    """
+    Returns an 2d array of dlib rects of human faces in a image using the cnn face detector
+    :param images: A list of images (each as a numpy array)
+    :param number_of_times_to_upsample: How many times to upsample the image looking for faces. Higher numbers find smaller faces.
+    :return: A list of dlib 'rect' objects of found face locations
+    """
+    return cnn_face_detector(images, number_of_times_to_upsample, batch_size=batch_size)
 
 
 def batch_face_locations(images, number_of_tiumes_to_upsample=1, batch_size=128):
-    pass
+    """
+    Returns an 2d array of bounding boxes of human face in an image using cnn face detector
+    if you are using a GPU, this can give you much faster results since GPU
+    can process batches of images at once. If you aren't using a GPU, you don't need this function.
+
+    :param images: A list of images (each a numpy array)
+    :param number_of_tiumes_to_upsample: How many times to upsample the image looking for faces. Higher numbers find smaller faces.
+    :param batch_size: How many images to include in each GPU processing batch.
+    :return: A list of tuples of found face locations in css (top, right, bottom, left) order.
+    """
+
+    def convert_cnn_detections_to_css(detections):
+        return [_trim_css_to_bounds(_rect_to_css(face.rect), images[0].shape) for face in detections]
+
+    raw_detections_batched = _raw_face_locations_batched(images, number_of_tiumes_to_upsample, batch_size)
+
+    return list(map(convert_cnn_detections_to_css, raw_detections_batched))
 
 
 def _raw_face_landmarks(face_image, face_locations=None, model="large"):
@@ -158,8 +190,47 @@ def _raw_face_landmarks(face_image, face_locations=None, model="large"):
 
 
 def face_landmarks(face_image, face_loactions=None, model="large"):
-    pass
+    """
+    Given an image, returns a dict of face feature locations (eyes, nose, etc) for each face in the image.
 
+    :param face_image: Image to search.
+    :param face_loactions: Optionally provide a list of face locations to check.
+    :param model: Optional - Which model to use. "large" (default) or "small" which only returns 5 point but is faster.
+    :return: A list of dicts of face feature locations (eyes, nose, etc).
+    """
+    landmarks = _raw_face_landmarks(face_image, face_locations, model)
+    landmarks_as_tuples = [[(p.x, p.y) for p in landmarks.parts()] for landmark in landmarks]
+
+    # For a definition of each point index, see https://cdn-images-1.medium.com/max/1600/1*AbEg31EgkbXSQehuNJBlWg.png
+    if model == 'large':
+        return [{
+            "chin": points[0:17],
+            "left_eyebrow": points[17:22],
+            "right_eyebrow": points[22:27],
+            "nose_bridge": points[27:31],
+            "nose_tip": points[31:36],
+            "left_eye": points[36:42],
+            "right_eye": points[42:48],
+            "top_lip": points[48:55] + [points[64]] + [points[63]] + [points[62]] + [points[61]] + [points[60]],
+            "bottom_lip": points[54:60] + [points[48]] + [points[60]] + [points[67]] + [points[66]] + [points[65]] + [
+                points[64]]
+        } for points in landmarks_as_tuples]
+    elif model == 'small':
+        return [{
+            "nose_tip": [points[4]],
+            "left_eye": points[2:4],
+            "right_eye": points[0:2],
+        } for points in landmarks_as_tuples]
+    else:
+        raise ValueError("Invalid landmarks model type. Supported models are ['small', 'large'].")
 
 def compare_faces(known_face_encodings, face_encoding_to_check, tolerance=0.6):
-    pass
+    """
+    Compare a list of faces encodings against a candidate encoding to see if they match.
+
+    :param known_face_encodings: A list of known face encodings
+    :param face_encoding_to_check: A single face encoding to compare against the list
+    :param tolerance: How much distance between faces to consider it a match. Lower is more strict. 0.6 is typical best performance.
+    :return: A list of true/false values indicating which known_face_encodings match the face encodings to check.
+    """
+    return list(face_distance(known_face_encodings, face_encoding_to_check) <= tolerance)
