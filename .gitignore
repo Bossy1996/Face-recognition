@@ -3,3 +3,6 @@
 
 # Pycharm folder
 /.idea
+
+# Visual Studio code stuff
+/.vscode
