@@ -3,6 +3,8 @@ import numpy as np
 from PIL import ImageFile
 import dlib
 
+"""To be able to use dlib you need to install visual studio for C++ or it won't install the dlib module."""
+
 try:
     import dlib_models_face_recognition
 except ImportError:

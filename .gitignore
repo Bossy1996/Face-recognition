@@ -4,5 +4,5 @@
 # Pycharm folder
 /.idea
 
-# build folder
-/dist
+# Visual Studio code stuff
+/.vscode
