@@ -6,3 +6,6 @@
 
 # Visual Studio code stuff
 /.vscode
+
+# build folder
+/dist
