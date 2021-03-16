@@ -9,7 +9,7 @@ try:
     import dlib_models_face_recognition
 except ImportError:
     print("Please install `dlib-models-face-recognition` with this command before using `Face_recognition`:\n`")
-    print("pip install git+https://github.com/Bossy1996/dlib-models-face-recognition")
+    print("pip3 install git+https://github.com/Bossy1996/dlib-models-face-recognition")
     quit()
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
