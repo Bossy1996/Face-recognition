@@ -2,13 +2,7 @@ Face recognition
 ================
 Face_recognition is a face detection and recognition library
 which allows you to detect
-and recognize faces without using OpenCV.
-
-Built using Dlib models.
-
-It's provided a simple face detection and face recognition command line tool that lets you detect and recognize images from a folder using the command line.
-
-It't the firs version of the library.
+and recognize faces without using OpenCV's face detection. It's provided a simple face detection and face recognition command line tool that lets you detect and recognize images from a folder using the command line. It was builded using the Dlib face detection models.
 
 Features
 ________
@@ -47,7 +41,7 @@ ____________
 
 It has been develope in python 3.9 so i don't know if it works in other python versions.
 
-Windows supported (I haven't try it neither in macOS or Linux)
+Linux supported(I haven't try it on macOS or windows)
 
 Currently working on...
 
